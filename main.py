@@ -1,6 +1,8 @@
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from app.scraper import get_top_posts
 from app.caption_writer import generate_caption
+from app.image_generator import generate_image
 
 app = FastAPI()
 
@@ -22,3 +24,10 @@ def caption():
         "post_title": post["title"],
         "caption": caption
     }
+
+@app.get("/generate-image")
+def image():
+    posts = get_top_posts()
+    post = posts[0]
+    image_path = generate_image(post)
+    return FileResponse(image_path, media_type="image/png")
